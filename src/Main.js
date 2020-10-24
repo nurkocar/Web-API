@@ -19,6 +19,32 @@ const Main = (props) => {
         setUserData(data);
     }
 
+    function promiseFunction(num){
+        return new Promise((resolve, reject) => {
+            if(num > 5){
+                resolve('Sayi besten buyuk!');
+            }
+            else{
+                reject('Sayi besten kucuk..')
+            }
+        })
+    }
+
+    const checkNumber = () => {
+        promiseFunction(10)
+            .then(response => {
+                console.log('response: ');
+                console.log(response);
+            })
+            .catch(error => {
+                console.log('error: ');
+                console.log(error);
+
+            })
+
+        console.log(result);
+    }
+
     
     return (
         <SafeAreaView>
@@ -28,9 +54,15 @@ const Main = (props) => {
                     title='Fetch Data Then'
                     onPress={fetchData_Then}
                 />
+
                 <Button
                     title='Fetch Data Await'
                     onPress={fetchData_Await}
+                />
+
+                <Button
+                    title='Check Number'
+                    onPress={checkNumber}
                 />
 
                 <FlatList
