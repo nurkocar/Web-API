@@ -1,77 +1,46 @@
 import axios from 'axios';
-import React, {useState} from 'react';
-import { SafeAreaView, View, Text, Button, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, View, ActivityIndicator } from 'react-native';
+
+import { Button, RestaurantCard } from './components'
 
 const Main = (props) => {
 
-    const [userData, setUserData] = useState([]);
+    const [restaurantData, setRestaurantData] = useState(null);
+    const [isLoading, setLoading] = useState(true);
 
-    const fetchData_Then = () => {
-        axios.get('https://jsonplaceholder.typicode.com/users')
-        .then(({data}) => {
-            console.log(data);
-            setUserData(data);
-        })
+    //ASYNC_AWAIT
+    const fetchRestaurant = async () => {
+        setLoading(true)
+        const response = await axios.get('https://random-data-api.com/api/restaurant/random_restaurant');
+        setRestaurantData(response.data);
+        setLoading(false);
     }
 
-    const fetchData_Await = async () => {
-        const {data} = await axios.get('https://jsonplaceholder.typicode.com/users')
-        setUserData(data);
-    }
+    useEffect(() => {
+        fetchRestaurant();
+    }, [])
 
-    function promiseFunction(num){
-        return new Promise((resolve, reject) => {
-            if(num > 5){
-                resolve('Sayi besten buyuk!');
-            }
-            else{
-                reject('Sayi besten kucuk..')
-            }
-        })
-    }
-
-    const checkNumber = () => {
-        promiseFunction(10)
-            .then(response => {
-                console.log('response: ');
-                console.log(response);
-            })
-            .catch(error => {
-                console.log('error: ');
-                console.log(error);
-
-            })
-
-        console.log(result);
-    }
-
-    
     return (
-        <SafeAreaView>
-            <View>
+        <SafeAreaView style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+
+                {
+                    isLoading ?
+
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <ActivityIndicator size = 'large'/>
+                        </View>
+                        :
+                        <RestaurantCard item={restaurantData} />
+                }
+
 
                 <Button
-                    title='Fetch Data Then'
-                    onPress={fetchData_Then}
-                />
-
-                <Button
-                    title='Fetch Data Await'
-                    onPress={fetchData_Await}
-                />
-
-                <Button
-                    title='Check Number'
-                    onPress={checkNumber}
-                />
-
-                <FlatList
-                    data = {userData}
-            renderItem = {({item}) => <Text>{item.name}</Text>}
-                
+                    title="Suggest New Restaurant"
+                    onNewRequest={() => fetchRestaurant()}
                 />
             </View>
-
         </SafeAreaView>
     );
 }
